@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      script:
+        required: false
+        type: string
 
 env:
   COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
@@ -112,3 +116,8 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           file: ./coverage.xml
+
+      - name: Run additional script
+        if: ${{ inputs.script }}
+        run: php ${{ inputs.script }}
+
