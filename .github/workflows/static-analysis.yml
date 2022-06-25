@@ -11,6 +11,11 @@ on:
       php_version:
         required: true
         type: string
+      has_crc_config:
+        required: false
+        default: false
+        type: boolean
+        description: True if the project has composer_require_checker.json
 
 jobs:
   static-analysis-phpstan:
@@ -119,5 +124,10 @@ jobs:
           composer install --no-interaction --no-progress --prefer-dist
           composer require --dev maglnet/composer-require-checker
 
-      - name: Run composer-require-checker
+      - name: Run composer-require-checker without config
+        if: ${{ !inputs.has_crc_config }}
         run: ./vendor/bin/composer-require-checker check ./composer.json
+
+      - name: Run composer-require-checker with config
+        if: ${{ inputs.has_crc_config }}
+        run: ./vendor/bin/composer-require-checker check ./composer.json --config-file=./composer-require-checker.json
