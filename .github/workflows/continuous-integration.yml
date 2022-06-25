@@ -10,11 +10,21 @@ on:
         type: string
         required: false
         description: Additional scripts to run
-      php_matrix:
+      old_stable:
         type: string
         default: '["7.4", "8.0", "8.1"]'
         required: false
-        description: php-version matrix
+        description: Old stable php version matrix
+      current_stable:
+        type: string
+        default: 8.1
+        required: false
+        description: Current stable php version
+      next_stable:
+        type: string
+        default: 8.2
+        required: false
+        description: Next stable php version
 
 env:
   COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
@@ -27,22 +37,22 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        php-version: ${{fromJson(inputs.php_matrix)}}
+        php-version: ${{ fromJson(inputs.old_stable) }}
         dependencies: [highest, lowest]
         os: [ubuntu-latest]
         experimental: [false]
         include:
-          - php-version: "8.1"
+          - php-version: ${{ inputs.current_stable }}
             os: windows-latest
             experimental: false
-          - php-version: "8.1"
+          - php-version: ${{ inputs.current_stable }}
             os: macos-latest
             experimental: false
-          - php-version: "8.2"
+          - php-version: ${{ inputs.next_stable }}
             dependencies: lowest-ignore
             os: ubuntu-latest
             experimental: true
-          - php-version: "8.2"
+          - php-version:  ${{ inputs.next_stable }}
             dependencies: highest-ignore
             os: ubuntu-latest
             experimental: true
