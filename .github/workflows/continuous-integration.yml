@@ -6,25 +6,18 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
+      old_stable:
+        type: string
+        required: true
+        description: Old stable php version matrix
+      current_stable:
+        type: string
+        required: true
+        description: Current stable php version
       script:
         type: string
         required: false
         description: Additional scripts to run
-      old_stable:
-        type: string
-        default: '["7.4", "8.0", "8.1"]'
-        required: false
-        description: Old stable php version matrix
-      current_stable:
-        type: string
-        default: 8.1
-        required: false
-        description: Current stable php version
-      next_stable:
-        type: string
-        default: 8.2
-        required: false
-        description: Next stable php version
 
 env:
   COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
