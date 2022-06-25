@@ -27,24 +27,16 @@ jobs:
           - '7.4'
           - '8.0'
           - '8.1'
-        dependencies: [highest]
+        dependencies: [highest, lowest]
         os: [ubuntu-latest]
         experimental: [false]
         include:
-          - php-version: "7.2"
-            dependencies: lowest
-          - php-version: "7.3"
-            dependencies: lowest
-          - php-version: "7.4"
-            dependencies: lowest
-          - php-version: "8.0"
-            dependencies: lowest
-          - php-version: "8.1"
-            dependencies: lowest
           - php-version: "8.1"
             os: windows-latest
+            experimental: false
           - php-version: "8.1"
             os: macos-latest
+            experimental: false
           - php-version: "8.2"
             dependencies: lowest-ignore
             os: ubuntu-latest
