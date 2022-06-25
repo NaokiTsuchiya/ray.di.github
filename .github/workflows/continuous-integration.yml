@@ -7,8 +7,14 @@ on:
   workflow_call:
     inputs:
       script:
-        required: false
         type: string
+        required: false
+        description: Additional scripts to run
+      php_matrix:
+        type: string
+        default: '["7.4", "8.0", "8.1"]'
+        required: false
+        description: php-version matrix
 
 env:
   COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
@@ -21,12 +27,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        php-version:
-          - '7.2'
-          - '7.3'
-          - '7.4'
-          - '8.0'
-          - '8.1'
+        php-version: ${{fromJson(inputs.php_matrix)}}
         dependencies: [highest, lowest]
         os: [ubuntu-latest]
         experimental: [false]
