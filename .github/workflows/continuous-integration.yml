@@ -2,6 +2,8 @@ name: Continuous Integration
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
   pull_request:
   workflow_dispatch:
   workflow_call:
@@ -27,7 +29,7 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: false
     strategy:
       matrix:
         php-version: ${{ fromJson(inputs.old_stable) }}
@@ -41,14 +43,6 @@ jobs:
           - php-version: ${{ inputs.current_stable }}
             os: macos-latest
             experimental: false
-          - php-version: ${{ inputs.next_stable }}
-            dependencies: lowest-ignore
-            os: ubuntu-latest
-            experimental: true
-          - php-version:  ${{ inputs.next_stable }}
-            dependencies: highest-ignore
-            os: ubuntu-latest
-            experimental: true
 
     steps:
       - name: Checkout
@@ -102,4 +96,3 @@ jobs:
       - name: Run additional script
         if: ${{ inputs.script }}
         run: php ${{ inputs.script }}
-
