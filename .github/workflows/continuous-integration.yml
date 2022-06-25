@@ -16,10 +16,6 @@ on:
         description: Current stable php version
         required: true
         type: string
-      next_stable:
-        description: Next stable php version
-        required: true
-        type: string
       script:
         description: Additional scripts to run
         required: false
@@ -33,13 +29,11 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         php-version: ${{ fromJson(inputs.old_stable) }}
         dependencies: [highest, lowest]
         os: [ubuntu-latest]
-        experimental: [false]
         include:
           - php-version: ${{ inputs.current_stable }}
             os: windows-latest
@@ -47,14 +41,6 @@ jobs:
           - php-version: ${{ inputs.current_stable }}
             os: macos-latest
             experimental: false
-          - php-version: ${{ inputs.next_stable }}
-            dependencies: lowest-ignore
-            os: ubuntu-latest
-            experimental: true
-          - php-version:  ${{ inputs.next_stable }}
-            dependencies: highest-ignore
-            os: ubuntu-latest
-            experimental: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
