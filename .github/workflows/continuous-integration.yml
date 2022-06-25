@@ -33,32 +33,18 @@ jobs:
         include:
           - php-version: "7.2"
             dependencies: lowest
-            os: ubuntu-latest
-            experimental: false
           - php-version: "7.3"
             dependencies: lowest
-            os: ubuntu-latest
-            experimental: false
           - php-version: "7.4"
             dependencies: lowest
-            os: ubuntu-latest
-            experimental: false
           - php-version: "8.0"
             dependencies: lowest
-            os: ubuntu-latest
-            experimental: false
           - php-version: "8.1"
             dependencies: lowest
-            os: ubuntu-latest
-            experimental: false
           - php-version: "8.1"
             os: windows-latest
-            dependencies: highest
-            experimental: false
           - php-version: "8.1"
             os: macos-latest
-            dependencies: highest
-            experimental: false
           - php-version: "8.2"
             dependencies: lowest-ignore
             os: ubuntu-latest
