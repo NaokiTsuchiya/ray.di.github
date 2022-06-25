@@ -55,8 +55,6 @@ jobs:
             dependencies: highest-ignore
             os: ubuntu-latest
             experimental: true
-        exclude:
-          - php-version:  ${{ inputs.next_stable }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
