@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      php_version:
+        required: true
+        type: string
 
 jobs:
   coding-standards:
@@ -16,7 +21,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: ${{ inputs.php_version }}
           tools: cs2pr
           coverage: none
 
