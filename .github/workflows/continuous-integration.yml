@@ -9,17 +9,21 @@ on:
   workflow_call:
     inputs:
       old_stable:
-        type: string
-        required: true
         description: Old stable php version matrix
-      current_stable:
-        type: string
         required: true
-        description: Current stable php version
-      script:
         type: string
-        required: false
+      current_stable:
+        description: Current stable php version
+        required: true
+        type: string
+      next_stable:
+        description: Next stable php version
+        required: true
+        type: string
+      script:
         description: Additional scripts to run
+        required: false
+        type: string
 
 env:
   COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
@@ -29,7 +33,7 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
-    continue-on-error: false
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         php-version: ${{ fromJson(inputs.old_stable) }}
@@ -43,7 +47,16 @@ jobs:
           - php-version: ${{ inputs.current_stable }}
             os: macos-latest
             experimental: false
-
+          - php-version: ${{ inputs.next_stable }}
+            dependencies: lowest-ignore
+            os: ubuntu-latest
+            experimental: true
+          - php-version:  ${{ inputs.next_stable }}
+            dependencies: highest-ignore
+            os: ubuntu-latest
+            experimental: true
+        exclude:
+          - php-version:  ${{ inputs.next_stable }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
