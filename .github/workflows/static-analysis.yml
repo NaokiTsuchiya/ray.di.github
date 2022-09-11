@@ -122,7 +122,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer install --no-interaction --no-progress --prefer-dist
-          composer require --dev maglnet/composer-require-checker
+          composer require maglnet/composer-require-checker --dev --with-all-dependencies
 
       - name: Run composer-require-checker without config
         if: ${{ !inputs.has_crc_config }}
