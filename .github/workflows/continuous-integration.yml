@@ -8,13 +8,13 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      old_stable:
-        description: Old stable php version matrix
+      min:
+        description: Minimum PHP version
         required: true
-        default: '["8.0", "8.1"]'
+        default: "8.0"
         type: string
       current_stable:
-        description: Current stable php version
+        description: Current stable PHP version
         required: true
         default: "8.2"
         type: string
@@ -28,21 +28,35 @@ env:
   COMPOSER_UPDATE_FLAGS: ""
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      php-versions: ${{ steps.determine-php-versions.outputs.php-versions }}
+    steps:
+      - name: Determine PHP Versions
+        id: determine-php-versions
+        run: |
+          #!/bin/bash
+          AVAILABLE_VERSIONS=("7.2" "7.3" "7.4" "8.0" "8.1")
+          MIN_VERSION="${{ inputs.min }}"
+          CURRENT_STABLE="${{ inputs.current_stable }}"
+          SELECTED_VERSIONS=()
+          for version in "${AVAILABLE_VERSIONS[@]}"; do
+            if [[ "$version" == "$MIN_VERSION" || "$version" > "$MIN_VERSION" ]] && \
+               [[ "$version" == "$CURRENT_STABLE" || "$version" < "$CURRENT_STABLE" ]]; then
+              SELECTED_VERSIONS+=("$version")
+            fi
+          done
+          echo "::set-output name=php-versions::[${SELECTED_VERSIONS[@]}]"
+
   phpunit:
-    name: PHPUnit
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ${{ fromJson(inputs.old_stable) }}
+        php-version: ${{ fromJson(needs.setup.outputs.php-versions) }}
         dependencies: [highest, lowest]
         os: [ubuntu-latest]
-        include:
-          - php-version: ${{ inputs.current_stable }}
-            os: windows-latest
-            experimental: false
-          - php-version: ${{ inputs.current_stable }}
-            os: macos-latest
-            experimental: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,26 +81,15 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Handle lowest dependencies update
-        if: contains(matrix.dependencies, 'lowest')
-        run: echo COMPOSER_UPDATE_FLAGS=$COMPOSER_UPDATE_FLAGS --prefer-lowest >> $GITHUB_ENV
-
-      - name: Handle ignore-platform-reqs dependencies update
-        if: contains(matrix.dependencies, 'ignore')
-        run: echo COMPOSER_FLAGS=$COMPOSER_FLAGS --ignore-platform-req=php >> $GITHUB_ENV
-
-      - name: Remove platform config to get latest dependencies for current PHP version
-        if: contains(matrix.dependencies, 'highest') || contains(matrix.dependencies, 'lowest')
-        run: composer config platform --unset
-
-      - name: Allow alpha releases for latest-deps builds to catch problems earlier
-        if: contains(matrix.dependencies, 'ignore')
-        run: composer config minimum-stability alpha
-
       - name: Update dependencies
-        run: composer update ${{ env.COMPOSER_UPDATE_FLAGS }} ${{ env.COMPOSER_FLAGS }}
+        run: |
+          if [ "${{ matrix.dependencies }}" == "lowest" ]; then
+            composer update --prefer-lowest ${{ env.COMPOSER_FLAGS }} ${{ env.COMPOSER_UPDATE_FLAGS }}
+          else
+            composer update ${{ env.COMPOSER_FLAGS }} ${{ env.COMPOSER_UPDATE_FLAGS }}
+          fi
 
-      - name: Run test suite
+      - name: Run PHPUnit tests
         run: ./vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload coverage report
