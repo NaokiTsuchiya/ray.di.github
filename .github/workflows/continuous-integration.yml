@@ -11,10 +11,12 @@ on:
       old_stable:
         description: Old stable php version matrix
         required: true
+        default: '["8.0", "8.1"]'
         type: string
       current_stable:
         description: Current stable php version
         required: true
+        default: "8.2"
         type: string
       script:
         description: Additional scripts to run
