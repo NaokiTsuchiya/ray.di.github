@@ -10,12 +10,12 @@ on:
     inputs:
       min:
         description: Minimum PHP version
-        required: true
+        required: false
         default: "8.0"
         type: string
       current_stable:
         description: Current stable PHP version
-        required: true
+        required: false
         default: "8.2"
         type: string
       script:
