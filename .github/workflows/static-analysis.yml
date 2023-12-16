@@ -8,9 +8,6 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      php_version:
-        required: true
-        type: string
       has_crc_config:
         required: false
         default: false
