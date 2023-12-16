@@ -8,14 +8,6 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      old_stable:
-        description: Old stable php version matrix
-        required: true
-        type: string
-      current_stable:
-        description: Current stable php version
-        required: true
-        type: string
       script:
         description: Additional scripts to run
         required: false
@@ -31,14 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ${{ fromJson(inputs.old_stable) }}
+        php-version: '["8.1", "8.2", "8.3"]'
         dependencies: [highest, lowest]
         os: [ubuntu-latest]
         include:
-          - php-version: ${{ inputs.current_stable }}
+          - php-version: "8.3"
             os: windows-latest
             experimental: false
-          - php-version: ${{ inputs.current_stable }}
+          - php-version: "8.3"
             os: macos-latest
             experimental: false
     steps:
