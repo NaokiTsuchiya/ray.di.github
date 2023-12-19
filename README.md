@@ -1,12 +1,12 @@
 # Ray.Di templates
 
+Perform unit tests on the PHP versions supported by [Supported Versions](https://www.php.net/supported-versions.php) and perform static analysis and coding standard inspections on the latest versions.
+
+If you want to change the PHP version, use the [v1](https://github.com/ray-di/.github/tree/v1) or [next_stable](https://github.com/ray-di/.github/tree/next_stable) branch.
+
 ## Usage
 
-
 ### coding-standards.yml
-
-指定するPHPのバージョンを`php_version`で指定します。（他の設定ファイルでも同様）
-Specifies the PHP version to run.　(The same is applied to other configuration files.)
 
 ```yaml
 name: Coding Standards
@@ -18,19 +18,11 @@ on:
 
 jobs:
   cs:
-    uses: ray-di/.github/.github/workflows/coding-standards.yml@v1
-    with:
-      php_version: 8.1
+    uses: ray-di/.github/.github/workflows/coding-standards.yml@v2
 ```
 
 ### continuous-integration.yml
 
-２つのバージョンがあります。通常の`v1`と時期バージョンのPHPをテストする`next_stable`です。
-
-There are two versions available. The regular `v1` version and the `next_stable` version, which tests the current version of PHP.
-
-#### v1
-
 ```yaml
 name: Continuous Integration
 
@@ -41,36 +33,15 @@ on:
 
 jobs:
   ci:
-    uses: ray-di/.github/.github/workflows/continuous-integration.yml@v1
+    uses: ray-di/.github/.github/workflows/continuous-integration.yml@v2
     with:
-      old_stable: '["7.4", "8.0"]'
-      current_stable: 8.1
+      script: demo/run.php
 ```
 
-#### next_stable
+If you have a script you want to run, such as demo, specify it with `script`.
 
-```yaml
-name: Continuous Integration
-
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
-
-jobs:
-  ci:
-    uses: ray-di/.github/.github/workflows/continuous-integration.yml@next_stable
-    with:
-      old_stable: '["7.4", "8.0"]'
-      current_stable: 8.1
-      next_stable: 8.2
-```
 
 ### static-analysis.yml
-
-[ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) のconfigファイル`composer-require-checker.json`があるときは`has_crc_config`をtrueにします。ない時はfalseにするか`has_crc_config`の指定そのものを取り除きます。
-
-If the config file `composer-require-checker.json` for [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) is present, set `has_ crc_config` to true. If not, set it to false or remove the `has_crcrc_config` specification itself.
 
 ```yaml
 name: Static Analysis
@@ -82,11 +53,10 @@ on:
 
 jobs:
   sa:
-    uses: ray-di/.github/.github/workflows/static-analysis.yml@v1
-    with:
-      php_version: 8.1
-      has_crc_config: true
+    uses: ray-di/.github/.github/workflows/static-analysis.yml@v2
 ```
+
+If the config file `composer-require-checker.json` for [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) is present, set `has_ crc_config` to true. If not, set it to false or remove the `has_crcrc_config` specification itself.
 
 ## GH actions workflow templates
 
